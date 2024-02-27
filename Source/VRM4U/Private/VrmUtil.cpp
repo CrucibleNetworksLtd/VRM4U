@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
+#include "VrmAssetListObject.h"
+#include "VrmMetaObject.h"
 
 void FImportOptionData::init() {
 }
-
-
 
 const TArray<VRMUtil::VRMBoneTable> VRMUtil::table_ue4_vrm = {
 	{"Root",""},
