@@ -103,7 +103,7 @@
 
 #if UE_VERSION_OLDER_THAN(5,4,0)
 #else
-#include "MIsc/FieldAccessor.h"
+#include "Misc/FieldAccessor.h"
 #endif
 
 #if PLATFORM_WINDOWS
@@ -621,14 +621,27 @@ bool ULoaderBPFunctionLibrary::VRMSetLoadMaterialType(EVRMImportMaterialType typ
 
 bool ULoaderBPFunctionLibrary::LoadVRMFile(const UVrmAssetListObject *InVrmAsset, UVrmAssetListObject *&OutVrmAsset, const FString filepath, const FImportOptionData &OptionForRuntimeLoad) {
 	VRMConverter::Options::Get().SetVrmOption(&OptionForRuntimeLoad);
-	OutVrmAsset = nullptr;
 
 	return LoadVRMFileLocal(InVrmAsset, OutVrmAsset, filepath);
 }
 
+void ULoaderBPFunctionLibrary::LoadVRMFromMemoryAsync(const UObject* WorldContextObject, const class UVrmAssetListObject* InVrmAsset, class UVrmAssetListObject*& OutVrmAsset, const TArray<uint8>& Data, const FImportOptionData& OptionForRuntimeLoad, struct FLatentActionInfo LatentInfo) {
+	VRMConverter::Options::Get().SetVrmOption(&OptionForRuntimeLoad);
+
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		FLatentActionManager& LatentActionManager = World->GetLatentActionManager();
+		if (LatentActionManager.FindExistingAction<FVrmAsyncLoadAction>(LatentInfo.CallbackTarget, LatentInfo.UUID) == NULL)
+		{
+			FVrmAsyncLoadActionParam p = { InVrmAsset, OutVrmAsset, OptionForRuntimeLoad, FString("a.vrm"), Data.GetData(), (size_t)Data.Num()};
+			LatentActionManager.AddNewAction(LatentInfo.CallbackTarget, LatentInfo.UUID, new FVrmAsyncLoadAction(LatentInfo, p));
+		}
+	}
+	return;
+}
+
 void ULoaderBPFunctionLibrary::LoadVRMFileAsync(const UObject* WorldContextObject, const class UVrmAssetListObject* InVrmAsset, class UVrmAssetListObject*& OutVrmAsset, const FString filepath, const FImportOptionData& OptionForRuntimeLoad, struct FLatentActionInfo LatentInfo) {
 	VRMConverter::Options::Get().SetVrmOption(&OptionForRuntimeLoad);
-	OutVrmAsset = nullptr;
 
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
@@ -644,6 +657,7 @@ void ULoaderBPFunctionLibrary::LoadVRMFileAsync(const UObject* WorldContextObjec
 
 
 bool ULoaderBPFunctionLibrary::LoadVRMFileLocal(const UVrmAssetListObject* InVrmAsset, UVrmAssetListObject*& OutVrmAsset, const FString filepath) {
+
 	TArray<uint8> Res;
 	if (FFileHelper::LoadFileToArray(Res, *filepath)) {
 	}
@@ -680,7 +694,6 @@ bool ULoaderBPFunctionLibrary::LoadVRMFileFromMemoryDefaultOption(UVrmAssetListO
 bool ULoaderBPFunctionLibrary::LoadVRMFileFromMemory(const UVrmAssetListObject *InVrmAsset, UVrmAssetListObject *&OutVrmAsset, const FString filepath, const uint8 *pFileDataData, size_t dataSize) {
 	TRACE_CPUPROFILER_EVENT_SCOPE(TEXT("LoadVRMFileFromMemory"))
 
-	OutVrmAsset = nullptr;
 	RenderControl _dummy_control;
 
 	if (InVrmAsset == nullptr) {

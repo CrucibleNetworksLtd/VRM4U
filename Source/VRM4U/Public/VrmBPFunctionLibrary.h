@@ -248,9 +248,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "VRM4U")
 	static UVrmAssetListObject* VRMGetVrmAssetListObjectFromAsset(const UObject *Asset);
 
-	UFUNCTION(BlueprintPure, Category = "VRM4U")
-	static bool VRMIsMovieRendering();
-
 };
 
 

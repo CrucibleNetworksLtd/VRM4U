@@ -23,8 +23,7 @@
 #endif
 
 UENUM()
-enum EVRM4U_CaptureSource : int
-{
+enum EVRM4U_CaptureSource {
 	ColorTexturePostOpaque,
 	ColorTextureOverlay,
 	DepthTexture,
@@ -84,7 +83,7 @@ public:
 	TSharedPtr<class FVrmSceneViewExtension, ESPMode::ThreadSafe> SceneViewExtension;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "VRM4U")
-	TMap<TObjectPtr<UTextureRenderTarget2D>, TEnumAsByte<EVRM4U_CaptureSource> > CaptureList;
+	TMap<UTextureRenderTarget2D*, TEnumAsByte<EVRM4U_CaptureSource> > CaptureList;
 
 	UFUNCTION(BlueprintCallable, Category = "VRM4U")
 	void AddCaptureTexture(UTextureRenderTarget2D *Texture, EVRM4U_CaptureSource CaptureSource);

@@ -32,7 +32,7 @@ static int countChild(aiNode *node, int c) {
 	return c;
 }
 
-static bool findActiveBone(const aiNode *node, TArray<FString> &table) {
+bool findActiveBone(const aiNode *node, TArray<FString> &table) {
 
 	if (table.Find(node->mName.C_Str()) != INDEX_NONE) {
 		return true;
@@ -45,7 +45,7 @@ static bool findActiveBone(const aiNode *node, TArray<FString> &table) {
 	return false;
 }
 
-static TArray<FString> makeActiveBone(const aiScene *scene) {
+TArray<FString> makeActiveBone(const aiScene *scene) {
 	TArray <FString> boneNameTable;
 	for (uint32 m = 0; m < scene->mNumMeshes; ++m) {
 		const auto &aiM = *scene->mMeshes[m];
@@ -58,7 +58,7 @@ static TArray<FString> makeActiveBone(const aiScene *scene) {
 	return boneNameTable;
 }
 
-static TMap<const aiNode*, const aiBone* > makeAiBoneTable(const aiScene* scene, TArray<const aiNode*> &nodeArray) {
+TMap<const aiNode*, const aiBone* > makeAiBoneTable(const aiScene* scene, TArray<const aiNode*> &nodeArray) {
 	TMap<const aiNode*, const aiBone*> table;
 
 	for (uint32 m = 0; m < scene->mNumMeshes; ++m) {
@@ -78,7 +78,7 @@ static TMap<const aiNode*, const aiBone* > makeAiBoneTable(const aiScene* scene,
 	return table;
 }
 
-static FMatrix convertAiMatToFMatrix(aiMatrix4x4 t, bool bOffsetMode = false) {
+FMatrix convertAiMatToFMatrix(aiMatrix4x4 t) {
 	FMatrix m;
 
 	m.M[0][0] = t.a1; m.M[1][0] = t.a2; m.M[2][0] = t.a3; m.M[3][0] = -t.a4 * 100.f;
@@ -95,12 +95,7 @@ static FMatrix convertAiMatToFMatrix(aiMatrix4x4 t, bool bOffsetMode = false) {
 		// rot
 		{
 			FTransform f;
-			if (bOffsetMode) {
-				//f.SetRotation(FRotator(0, 0, 180).Quaternion());
-				f.SetRotation(FRotator(0, 0, 90).Quaternion());
-			} else {
-				f.SetRotation(FRotator(0, 0, 90).Quaternion());
-			}
+			f.SetRotation(FRotator(0, 0, 90).Quaternion());
 
 			m = f.ToMatrixNoScale() * m * f.ToMatrixNoScale().Inverse();
 		}
@@ -423,7 +418,7 @@ void VRMSkeleton::readVrmBone(aiScene* scene, int& boneOffset, FReferenceSkeleto
 				}else{
 					auto bone = *pBone;
 
-					FMatrix m = convertAiMatToFMatrix(bone->mOffsetMatrix, true);
+					FMatrix m = convertAiMatToFMatrix(bone->mOffsetMatrix);
 					if (ParentIndex == INDEX_NONE) {
 					} else {
 					}

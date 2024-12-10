@@ -152,11 +152,7 @@ void UAnimGraphNode_VrmSpringBone::ValidateAnimNodeDuringCompilation(USkeleton* 
 
 FText UAnimGraphNode_VrmSpringBone::GetControllerDescription() const
 {
-	if (Node.EnableAutoSearchMetaData) {
-		return LOCTEXT("VrmSpringBone", "VrmSpringBone(auto)");
-	}else {
-		return LOCTEXT("VrmSpringBone", "VrmSpringBone");
-	}
+	return LOCTEXT("VrmSpringBone", "VrmSpringBone");
 }
 
 FText UAnimGraphNode_VrmSpringBone::GetTooltipText() const

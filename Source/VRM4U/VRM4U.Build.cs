@@ -60,8 +60,6 @@ public class VRM4U : ModuleRules
 				"AssetRegistry",
 				"CinematicCamera",
 				"InputCore",
-				"ControlRig",
-				"AnimationCore",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
@@ -74,16 +72,6 @@ public class VRM4U : ModuleRules
 			PublicDependencyModuleNames.Add("LevelSequence");
 			PublicDependencyModuleNames.Add("LevelSequenceEditor");
 			PublicDependencyModuleNames.Add("Sequencer");
-
-			BuildVersion Version2;
-			if (BuildVersion.TryRead(BuildVersion.GetDefaultFileName(), out Version2))
-			{
-				if (Version2.MajorVersion == 5)
-				{
-					PublicDependencyModuleNames.Add("MovieRenderPipelineEditor");
-					PublicDependencyModuleNames.Add("ControlRigDeveloper");
-				}
-			}
 		}
 
 		DynamicallyLoadedModuleNames.AddRange(
@@ -98,7 +86,6 @@ public class VRM4U : ModuleRules
 			//if (Version.MajorVersion == X && Version.MinorVersion == Y)
 			if (Version.MajorVersion == 5)
 			{
-				PrivateDependencyModuleNames.Add("RigVM");
 				PrivateDependencyModuleNames.Add("IKRig");
 				if (Target.bBuildEditor)
 				{

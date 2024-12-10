@@ -58,7 +58,7 @@ FText UAnimGraphNode_VrmPoseBlendNode::GetNodeTitleForPoseAsset(ENodeTitleType::
 
 FText UAnimGraphNode_VrmPoseBlendNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	if (Node.EnableAutoSearchMetaData)
+	if (Node.PoseAsset == nullptr)
 	{
 		// we may have a valid variable connected or default pin value
 		UEdGraphPin* PosePin = FindPin(GET_MEMBER_NAME_STRING_CHECKED(FAnimNode_VrmPoseBlendNode, PoseAsset));
@@ -77,8 +77,7 @@ FText UAnimGraphNode_VrmPoseBlendNode::GetNodeTitle(ENodeTitleType::Type TitleTy
 	}
 	else
 	{
-		return LOCTEXT("PoseByName_TitleVariable", "VRM4U Pose");
-		//return GetNodeTitleForPoseAsset(TitleType, Node.PoseAsset);
+		return GetNodeTitleForPoseAsset(TitleType, Node.PoseAsset);
 	}
 }
 
